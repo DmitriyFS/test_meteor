@@ -2,7 +2,7 @@ import { Button, Container, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 import {
   getPosts,
   getUsers,
@@ -27,21 +27,41 @@ const Post = (props) => {
 
   const dispatch = useDispatch();
 
-  const database = useSelector(selectPost, selectUser);
+  const posts = useSelector(selectPost);
+  const users = useSelector(selectUser);
 
   useEffect(() => {
-    dispatch(getPosts());
+    if (posts.length === 0) {
+      dispatch(getPosts());
+    }
+    if (users.length === 0) {
+      dispatch(getUsers());
+    }
   }, []);
 
-  useEffect(() => {
-    dispatch(getUsers());
-  }, []);
+// ___________________________________________________________________________
+ // const { params } = useParams();
+  // console.log(params);
+  // const post = posts.find((item) => item.id === params.id);
+  // console.log(post);
+  //__________________________________________________________________________
+  // Пробовал производить фильтрацию отрисовки через useParams() и find
+
+
+
+  if (!posts) {
+    return <div></div>;
+  }
+
+  if (!users) {
+    return <div></div>;
+  }
 
   return (
     <article>
       <div className={classes.articleContent}>
-        {database.post.map((newpost) => {
-          const user = database.user.find((item) => item.id === newpost.userId);
+        {posts.map((newposts) => {
+          const user = users.find((item) => item.id === newposts.userId) || {};
 
           return (
             <Container maxWidth="md">
@@ -51,7 +71,7 @@ const Post = (props) => {
                 color="textPrimary"
                 gutterBottom
               >
-                {newpost.title}
+                {newposts.title}
               </Typography>
               <Typography
                 variant="h4"
@@ -67,15 +87,13 @@ const Post = (props) => {
                 color="textSecondary"
                 paragraph
               >
-                {newpost.body}
+                {newposts.body}
               </Typography>
 
               <div className={classes.articleButtons} align="center">
-                <Link to="main/">
-                  <Button variant="contained" color="primary">
-                    To return
-                  </Button>
-                </Link>
+                <Button href="/main" variant="contained" color="primary">
+                  To return
+                </Button>
               </div>
             </Container>
           );

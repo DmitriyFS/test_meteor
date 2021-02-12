@@ -15,7 +15,6 @@ import {
   selectUser,
 } from "../../../redax/reduserApi";
 import { useDispatch, useSelector } from "react-redux";
-import { NavLink } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   cardContent: {
@@ -34,35 +33,46 @@ const PostsListen = (props) => {
 
   const dispatch = useDispatch();
 
-  const database = useSelector(selectPost, selectUser);
+  const posts = useSelector(selectPost);
+  const users = useSelector(selectUser);
 
   useEffect(() => {
-    dispatch(getPosts());
+    if (posts.length === 0) {
+      dispatch(getPosts());
+    }
+    if (users.length === 0) {
+      dispatch(getUsers());
+    }
   }, []);
 
-  useEffect(() => {
-    dispatch(getUsers());
-  }, []);
+  if (!posts) {
+    return <div></div>;
+  }
+
+  if (!users) {
+    return <div></div>;
+  }
 
   return (
     <main>
       <div className={classes.mainContent}>
         <Container className={classes.cardGrid} maxWidth="md">
           <Grid container spacing={4}>
-            {database.post.map((newpost) => {
-              const user = database.user.find(
-                (item) => item.id === newpost.userId
-              );
+            {posts.map((newposts) => {
+              const user =
+                users.find((item) => item.id === newposts.userId) || {};
 
               return (
-                <Grid item key={newpost.id} xs={12} sm={6} md={4}>
+                <Grid item key={newposts.id} xs={12} sm={6} md={4}>
                   <Card className={classes.card}>
                     <CardContent className={classes.cardContent}>
-                      <NavLink to={"main/" + newpost.id}>
-                        <Link variant="h6" gutterBottom>
-                          {newpost.title}
-                        </Link>
-                      </NavLink>
+                      <Link
+                        variant="h6"
+                        gutterBottom
+                        href={"main/" + newposts.id}
+                      >
+                        {newposts.title}
+                      </Link>
                       <Typography>{user.name}</Typography>
                     </CardContent>
                   </Card>

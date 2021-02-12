@@ -4,15 +4,15 @@ import axios from "axios";
 export const ReduserApi = createSlice({
   name: "state",
   initialState: {
-    post: [],
-    user: [],
+    posts: [],
+    users: [],
   },
   reducers: {
     savePostsData: (state, action) => {
-      state.post = action.payload.data;
+      state.posts = action.payload.data;
     },
     saveUsersData: (state, action) => {
-      state.user = action.payload.data;
+      state.users = action.payload.data;
     },
   },
 });
@@ -20,23 +20,24 @@ export const ReduserApi = createSlice({
 export const { savePostsData } = ReduserApi.actions;
 export const { saveUsersData } = ReduserApi.actions;
 
-export const getPosts = (data) => (dispatch, getState) => {
+export const getPosts = () => (dispatch, getState) => {
   const state = getState();
-  console.log("POSTS", data, state);
+  console.log("POSTS", state);
   axios
     .get(`https://jsonplaceholder.typicode.com/posts`)
 
     .then((response) => {
       dispatch(savePostsData(response));
+      console.log("SUCCESS", response);
     })
     .catch((error) => {
       console.log("ERROR", error);
     });
 };
 
-export const getUsers = (data) => (dispatch, getState) => {
+export const getUsers = () => (dispatch, getState) => {
   const state = getState();
-  console.log("USERS", data, state);
+  console.log("USERS", state);
   axios
     .get(`https://jsonplaceholder.typicode.com/users`)
 
@@ -49,7 +50,7 @@ export const getUsers = (data) => (dispatch, getState) => {
     });
 };
 
-export const selectPost = (state) => state.data;
-export const selectUser = (state) => state.data;
+export const selectPost = (state) => state.data.posts;
+export const selectUser = (state) => state.data.users;
 
 export default ReduserApi.reducer;
